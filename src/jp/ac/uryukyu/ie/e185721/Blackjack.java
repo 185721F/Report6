@@ -9,16 +9,18 @@ public class Blackjack {
         Scanner br = new Scanner(System.in);
             Random Toranpu = new Random();
 
-
+            //Blackjackの条件ポイント
             int Blackjack_point_Player = 0;
             int Blackjack_point_Dealer = 0;
-            String win = "Blackjack";
+            //得点
             int Dealer_point = 0;
             int Player_point = 0;
-            int[] Dealer = new int[30];
-            int[] Player = new int[30];
+            //カードを持てる回数
+            int[] Dealer = new int[10];
+            int[] Player = new int[10];
 
         for (int i=0;i<2;i++) {
+            //ここの課題としてAを引いた場合に1or11かを判断しないといけないが一枚目で引いてしまった場合、普通は見えるもう一枚のカードを表示することができないのでどうにか表示できるようにしたい。
             //プレイヤーが引いたカード
             Player[i]=Toranpu.nextInt(13)+1;
             //jack.queen.kingを引いた場合の処理
@@ -26,11 +28,11 @@ public class Blackjack {
                 Player[i]=10;
                 Blackjack_point_Player += 1;
             }
+            //Aを引いた時の処理
             if (Player[i]==1) {
+                System.out.print("Please select 1 or 11");
                 Scanner serect = new Scanner(System.in);
                 String number=serect.nextLine();
-                //Aを引いた時の処理
-                System.out.print("Please select 1 or 11");
                 if(number.equals("1")){
                     Player[i]=1;
                 }
@@ -40,6 +42,7 @@ public class Blackjack {
                 }
 
             }
+            System.out.println("Player"+i+1+"枚目のカード"+Player[i]);
             Player_point+=Player[i];
             if (Player_point>=22) {
                 for (int l=0;l<=Player.length;l++) {
@@ -60,17 +63,11 @@ public class Blackjack {
                 Blackjack_point_Dealer += 1;
             }
             if (Dealer[j]==1) {
-                System.out.print("Please select 1 or 11");
-                Scanner serect = new Scanner(System.in);
-                String number=serect.nextLine();
-                if(number.equals("1")){
-                    Dealer[j]=1;
-                }
-                if(number.equals("11")){
+                //dealerがAを引いた場合は11を選ぶようにしている。
                     Dealer[j]=11;
                     Blackjack_point_Dealer += 2;
-                }
             }
+            System.out.println("Dealer"+j+1+"枚目のカード"+Dealer[j]);
             Dealer_point+=Dealer[j];
             if(Dealer_point>=22) {
                 System.out.println("Dealer burst");
@@ -94,7 +91,15 @@ public class Blackjack {
                     Player[i]=10;
                 }
                 if (Player[i]==1) {
-                    Player[i]=11;
+                    System.out.print("Please select 1 or 11");
+                    Scanner Hit = new Scanner(System.in);
+                    String num=Hit.nextLine();
+                    if(num.equals("1")){
+                        Player[i]=1;
+                    }
+                    if(num.equals("11")){
+                        Player[i]=11;
+                    }
                 }
                 Player_point+=Player[i];
                 if(Player_point>=22) {
@@ -104,24 +109,34 @@ public class Blackjack {
             }
             if (str.equals("Stand")) break;
         }
-        if (Dealer_point > 21 && Player_point < 22) {
-            //ディーラーがバースト
+        //試行の結果、どちらかがバーストした場合でも点数が高い方が勝ってしまったため、先にバーストの判断をして、していなければ点数の勝負で判断するという形にした。
+        if(Dealer_point < 22 && Player_point > 21){
+            System.out.println("Dealer wins");
+        }else if(Dealer_point > 21 && Player_point < 22){
             System.out.println("Player wins");
-        }else if (Dealer_point < Player_point) {
-            //ポイントがプレイヤーの方が高い
-            System.out.println("Player wins");
-        }else if (Dealer_point > Player_point) {
-            //ポイントがディーラーの方が高い
-            System.out.println("Dealer wins");
-        }else if (Dealer_point < 22 && Player_point> 21) {
-            //プレイヤーがバースト
-            System.out.println("Dealer wins");
-        } else if (Dealer_point == Player_point) {
-            //双方が同じポイント
-            System.out.println("Drow");
-        }else if(Dealer_point > 21&& Player_point >21){
-            //双方がバースト
-            System.out.println("Dealer wins");
+        }else {
+            if (Dealer_point < Player_point) {
+                //ポイントがプレイヤーの方が高い
+                System.out.println("Player wins");
+            } else if (Dealer_point > Player_point) {
+                //ポイントがディーラーの方が高い
+                System.out.println("Dealer wins");
+            } else if (Dealer_point == Player_point) {
+                //双方が同じポイント
+                System.out.println("Drow");
+            } else if (Dealer_point > 21 && Player_point > 21) {
+                //双方がバースト
+                System.out.println("Dealer wins");
+            } else if (Blackjack_point_Dealer == 3) {
+                //DealerがBlackjackだった場合(確認済み)
+                System.out.println("Dealer wins");
+            } else if (Blackjack_point_Player == 3) {
+                //PlayerがBlackjackだった場合(確認済み)
+                System.out.println("Player wins");
+            } else if (Blackjack_point_Dealer == Blackjack_point_Player) {
+                //双方がBlackjackだった場合(確認済み)
+                System.out.println("Drow");
+            }
         }
     }
 }
